@@ -3,6 +3,7 @@ import numpy as np
 from PIL import Image
 import math
 
+
 def pixel_log255(unorm_image):
     pxmin = unorm_image.min()
     pxmax = unorm_image.max()
@@ -14,6 +15,7 @@ def pixel_log255(unorm_image):
 
     norm_image = unorm_image
     return norm_image
+
 
 def iLoG(shape, std):
     s = (shape, shape)
@@ -34,12 +36,22 @@ def iLoG(shape, std):
 
 if __name__ == '__main__':
 
-    image = cv2.imread('b512.jpg', 0)
+    image = cv2.imread('bank 256x256.jpg', 0)
 
     h = iLoG(17, 2)
 
     grad = cv2.filter2D(image, -1, h)
+
     grad = pixel_log255(grad)
+    grad = grad.flatten()
+
+    for i, val in enumerate(grad):
+        if val > 30:
+            grad[i] = 255
+        else:
+            grad[i] = 0
+
+    grad = grad.reshape((image.shape[0], image.shape[1]))
 
     im = Image.fromarray(grad)
     if im.mode != 'RGB':
